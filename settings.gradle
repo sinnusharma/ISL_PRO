@@ -1,0 +1,3 @@
+include ':app'
+rootProject.name = "ISL_Pro"
+include ':openCVLibrary3413'
