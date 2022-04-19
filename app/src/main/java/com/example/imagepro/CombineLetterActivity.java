@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -21,13 +23,18 @@ import org.opencv.core.Mat;
 
 import java.io.IOException;
 
-public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
+public class CombineLetterActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
     private static final String TAG="MainActivity";
 
     private Mat mRgba;
     private Mat mGray;
     private CameraBridgeViewBase mOpenCvCameraView;
-    private objectDetectorClass objectDetectorClass;
+    private signLanguageClass signLanguageClass;
+
+    private Button clear_button;
+    private Button add_button;
+    private TextView change_text;
+
     private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -47,7 +54,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
     };
 
-    public CameraActivity(){
+    public CombineLetterActivity(){
         Log.i(TAG,"Instantiated new "+this.getClass());
     }
 
@@ -59,19 +66,23 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
 
         int MY_PERMISSIONS_REQUEST_CAMERA=0;
         // if camera permission is not given it will ask for it on device
-        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(CombineLetterActivity.this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+            ActivityCompat.requestPermissions(CombineLetterActivity.this, new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
         }
 
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.activity_combine_letter);
 
         mOpenCvCameraView=(CameraBridgeViewBase) findViewById(R.id.frame_Surface);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        clear_button=findViewById(R.id.clear_button);
+        add_button=findViewById(R.id.add_button);
+        change_text=findViewById(R.id.change_text);
+
         try{
 
-            objectDetectorClass=new objectDetectorClass(getAssets(), "hand_model.tflite","custom_label.txt",300, "sign_recoginition.tflite",96);
+            signLanguageClass=new signLanguageClass(clear_button,add_button,change_text,getAssets(), "hand_model.tflite","custom_label.txt",300, "sign_recoginition.tflite",96);
             Log.d("MainActivity","Model is successfully loaded");
         }
         catch (IOException e){
@@ -122,12 +133,9 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame){
         mRgba=inputFrame.rgba();
         mGray=inputFrame.gray();
-        // Before watching this video please watch previous video of loading tensorflow lite model
-
-        // now call that function
 
         Mat out = new Mat();
-        out = objectDetectorClass.recognizeImage(mRgba);
+        out = signLanguageClass.recognizeImage(mRgba);
 
         return out;
     }

@@ -23,18 +23,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Button camera_button;
-
+    private Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
                                                                                 
 
-        // select device and run
-        // we successfully loaded model
-        // before next tutorial
-        // as we are going to predict in Camera Activity
-        // Next tutorial will be about predicting using Interpreter
 
 
         camera_button=findViewById(R.id.camera_button);
@@ -42,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        });
+        button=findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,CombineLetterActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
 
